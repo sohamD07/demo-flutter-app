@@ -18,32 +18,33 @@ steps:
 # 2. Debug Variable
 - script: |
     echo "Flutter version: ${{ variables.flutter_Version }}"
+    echo "Flutter version: $(System.DefaultWorkingDirectory)"
   displayName: 'Debug Variables'
 
-# 3. Install Flutter
-- script: |
-    git clone https://github.com/flutter/flutter.git --branch ${{ variables.flutter_Version }}
-    export FLUTTER_HOME=$(System.DefaultWorkingDirectory)/flutter
-    echo "##vso[task.setvariable variable=FLUTTER_HOME]$FLUTTER_HOME"
-    echo "export PATH=$FLUTTER_HOME/bin:$PATH" >> $BASH_ENV
-    source $BASH_ENV
-    flutter doctor
-  displayName: 'Install Flutter'
+# # 3. Install Flutter
+# - script: |
+#     git clone https://github.com/flutter/flutter.git --branch ${{ variables.flutter_Version }}
+#     export FLUTTER_HOME=$(System.DefaultWorkingDirectory)/flutter
+#     echo "##vso[task.setvariable variable=FLUTTER_HOME]$FLUTTER_HOME"
+#     echo "export PATH=$FLUTTER_HOME/bin:$PATH" >> $BASH_ENV
+#     source $BASH_ENV
+#     flutter doctor
+#   displayName: 'Install Flutter'
 
-# 4. Install dependencies
-- script: |
-    flutter pub get
-  displayName: 'Install Flutter dependencies'
+# # 4. Install dependencies
+# - script: |
+#     flutter pub get
+#   displayName: 'Install Flutter dependencies'
 
-# 5. Build the Android app (APK file)
-- script: |
-    flutter build apk --release
-  displayName: 'Build Android APK'
+# # 5. Build the Android app (APK file)
+# - script: |
+#     flutter build apk --release
+#   displayName: 'Build Android APK'
 
-# 6. Publish the APK artifact
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: 'build/app/outputs/flutter-apk/' # Path to the directory containing the APK file
-    ArtifactName: 'Android_Artifact'
-    publishLocation: 'Container'
-  displayName: 'Publish APK Artifact'
+# # 6. Publish the APK artifact
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     PathtoPublish: 'build/app/outputs/flutter-apk/' # Path to the directory containing the APK file
+#     ArtifactName: 'Android_Artifact'
+#     publishLocation: 'Container'
+#   displayName: 'Publish APK Artifact'
