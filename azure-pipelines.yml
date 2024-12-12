@@ -6,8 +6,8 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  flutter_Version: "stable" # Renamed for clarity
+# variables:
+#   flutter_Version: "stable" # Renamed for clarity
 
 steps:
 
@@ -17,7 +17,7 @@ steps:
 
 # 2. Debug Variable
 - script: |
-    echo "Flutter version: ${{ variables.flutter_Version }}"
+    echo "Flutter version: 3.24.3"
     echo "Flutter version: $(System.DefaultWorkingDirectory)"
   displayName: 'Debug Variables'
 
