@@ -22,7 +22,7 @@ steps:
 
 # 3. Install Flutter
 - script: |
-    git clone https://github.com/flutter/flutter.git --branch stable
+    git clone https://github.com/flutter/flutter.git --branch ${{ variables.flutter_Version }}
     export FLUTTER_HOME=$(System.DefaultWorkingDirectory)/flutter
     echo "##vso[task.setvariable variable=FLUTTER_HOME]$FLUTTER_HOME"
     echo "export PATH=$FLUTTER_HOME/bin:$PATH" >> $BASH_ENV
