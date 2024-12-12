@@ -7,7 +7,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  flutterVersion: 'stable' # Specify the Flutter version to use (e.g., stable, 3.3.0, etc.)
+  flutter_Version: "stable" # Renamed for clarity
 
 steps:
 
@@ -15,26 +15,32 @@ steps:
 - task: Checkout@1
   displayName: 'Checkout Git repository'
 
-# 2. Install Flutter
+# 2. Debug Variable
 - script: |
-    git clone https://github.com/flutter/flutter.git --branch ${{ variables.flutterVersion }}
-    echo "##vso[task.setvariable variable=FLUTTER_HOME]$(System.DefaultWorkingDirectory)/flutter"
-    echo "export PATH=\$FLUTTER_HOME/bin:\$PATH" >> $BASH_ENV
+    echo "Flutter version: ${{ variables.flutter_Version }}"
+  displayName: 'Debug Variables'
+
+# 3. Install Flutter
+- script: |
+    git clone https://github.com/flutter/flutter.git --branch stable
+    export FLUTTER_HOME=$(System.DefaultWorkingDirectory)/flutter
+    echo "##vso[task.setvariable variable=FLUTTER_HOME]$FLUTTER_HOME"
+    echo "export PATH=$FLUTTER_HOME/bin:$PATH" >> $BASH_ENV
     source $BASH_ENV
     flutter doctor
   displayName: 'Install Flutter'
 
-# 3. Install dependencies
+# 4. Install dependencies
 - script: |
     flutter pub get
   displayName: 'Install Flutter dependencies'
 
-# 4. Build the Android app (APK file)
+# 5. Build the Android app (APK file)
 - script: |
     flutter build apk --release
   displayName: 'Build Android APK'
 
-# 5. Publish the APK artifact
+# 6. Publish the APK artifact
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: 'build/app/outputs/flutter-apk/' # Path to the directory containing the APK file
