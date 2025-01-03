@@ -2,7 +2,7 @@ trigger:
 - main  # Adjust to your branch name
 
 pool:
-  vmImage: 'ubuntu-latest'  # Use 'windows-latest', 'macos-latest', or 'ubuntu-latest'
+  name: 'Default'
 
 variables:
   flutterVersion: '3.5.3'  # Specify the Flutter version
@@ -11,6 +11,7 @@ steps:
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.x'  # Install Python, required for Flutter
+  displayName: 'Setup Python'
 
 # Install Flutter
 - script: |
@@ -33,3 +34,4 @@ steps:
     targetPath: 'build/app/outputs/flutter-apk/app-release.apk'
     artifact: 'FlutterAPK'
     publishLocation: 'pipeline'
+  displayName: 'Publish APK Artifact'
