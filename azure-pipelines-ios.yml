@@ -1,0 +1,48 @@
+trigger:
+- main  # Adjust to your branch name
+
+pool:
+  name: 'Default'  # Replace 'Default' with your self-hosted agent pool name
+
+variables:
+  flutterVersion: '3.5.3'  # Specify the Flutter version
+
+steps:
+# Ensure Python is available on the self-hosted agent
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'  # Install or use Python, required for Flutter
+  displayName: 'Setup Python'
+
+# Install Flutter
+- script:
+    git clone https://github.com/flutter/flutter.git --branch ${flutterVersion} --depth 1
+    echo '##vso[task.prependpath]$(Pipeline.Workspace)/flutter/bin'
+    flutter doctor
+  displayName: 'Install Flutter'
+
+# Install Dependencies
+- script: flutter pub get
+  displayName: 'Install Dependencies'
+
+# Set up macOS environment (Ensure Xcode and necessary tools are available)
+- script:
+    sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+    sudo xcodebuild -license accept
+  displayName: 'Set up Xcode'
+
+# Build iOS App (IPA)
+- script:
+    flutter build ios --release --no-codesign
+    cd ios
+    xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $(PWD)/Runner.xcarchive
+    xcodebuild -exportArchive -archivePath $(PWD)/Runner.xcarchive -exportOptionsPlist $(PWD)/exportOptions.plist -exportPath $(PWD)/build/ios/iphoneos
+  displayName: 'Build iOS App and Export IPA'
+
+# Publish IPA Artifact
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: 'build/ios/iphoneos/Runner.ipa'  # Path to the generated IPA
+    artifact: 'iOSAppIPA'
+    publishLocation: 'pipeline'
+  displayName: 'Publish IPA Artifact'
